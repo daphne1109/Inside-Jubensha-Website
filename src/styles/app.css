@@ -122,7 +122,7 @@ button {
 }
 .reveal.is-visible {
   opacity: 1;
-  filter: blur(0);
+  filter: none; /* not blur(0) — see .hero__wordmark */
   transform: none;
 }
 
@@ -282,14 +282,18 @@ button {
   width: min(34rem, 44vw, 52svh);
   min-width: 15rem;
   filter: drop-shadow(0 0 40px rgba(0, 0, 0, 0.75));
-  animation: mist-in 2.6s var(--ease-out) both;
+  /* `backwards`, not `both`: iOS WebKit drops the alpha channel of a PNG under a
+     zero-radius blur, and the art has a near-white matte, so a resting
+     `blur(0)` renders as a solid white box. Reverting to the rule above at the
+     end leaves no blur() in the computed filter at all. */
+  animation: mist-in 2.6s var(--ease-out) backwards;
 }
 .hero__label {
   align-self: center;
   width: min(4.8rem, 6.6vw, 7.8svh);
   min-width: 2.1rem;
   filter: drop-shadow(0 0 18px rgba(0, 0, 0, 0.8));
-  animation: mist-in 2.6s var(--ease-out) 0.35s both;
+  animation: mist-in 2.6s var(--ease-out) 0.35s backwards;
 }
 @keyframes mist-in {
   from { opacity: 0; filter: blur(14px) drop-shadow(0 0 40px rgba(0,0,0,0.75)); }
