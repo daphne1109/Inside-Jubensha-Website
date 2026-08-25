@@ -77,7 +77,7 @@ export default function App() {
                 <span className="visually-hidden">灵魂摆渡·鸳鸯 — {HERO.category}</span>
                 <img
                   className="hero__wordmark"
-                  src="/art/wordmark.webp"
+                  src="/art/wordmark.png"
                   alt=""
                   width={665}
                   height={650}
@@ -85,7 +85,7 @@ export default function App() {
                 />
                 <img
                   className="hero__label"
-                  src="/art/label-banner.webp"
+                  src="/art/label-banner.png"
                   alt=""
                   width={100}
                   height={290}
