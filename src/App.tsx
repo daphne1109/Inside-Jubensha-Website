@@ -18,6 +18,8 @@ import ClickAura, { type ClickPulse } from './components/ClickAura'
 const SECTION_IDS = NAV.map((n) => n.id)
 const MOTIF_GLYPHS = ['野', '灯', '烬']
 const FADE_MS = 900
+const BGM_VOLUME = 0.72
+const CLICK_VOLUME = 0.12
 
 export default function App() {
   const videoRef = useRef<HTMLVideoElement>(null)
@@ -54,7 +56,7 @@ export default function App() {
 
   const toggleSound = () => {
     setSound((on) => {
-      fadeAudio(on ? 0 : 1)
+      fadeAudio(on ? 0 : BGM_VOLUME)
       return !on
     })
   }
@@ -64,9 +66,9 @@ export default function App() {
     if (!button || button.disabled) return
 
     const clickSound = clickSoundRef.current
-    if (clickSound) {
+    if (sound && !button.classList.contains('sound') && clickSound) {
       clickSound.currentTime = 0
-      clickSound.volume = 0.3
+      clickSound.volume = CLICK_VOLUME
       void clickSound.play().catch(() => undefined)
     }
 
