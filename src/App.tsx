@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState, type MouseEvent } from 'react'
+import { useCallback, useEffect, useRef, useState, type MouseEvent, type PointerEvent } from 'react'
 import { BOOKING, CHAPTERS, FACTS, HERO, NAV } from './data/content'
 import { useActiveSection } from './hooks'
 import HeroVideo from './components/HeroVideo'
@@ -26,7 +26,7 @@ export default function App() {
   const audioRef = useRef<HTMLAudioElement>(null)
   const clickSoundRef = useRef<HTMLAudioElement>(null)
   const fadeRef = useRef(0)
-  const [sound, setSound] = useState(false)
+  const [sound, setSound] = useState(true)
   const [audioBroken, setAudioBroken] = useState(false)
   const [booking, setBooking] = useState(false)
   const [clickPulse, setClickPulse] = useState<ClickPulse>(null)
@@ -54,6 +54,17 @@ export default function App() {
     fadeRef.current = requestAnimationFrame(step)
   }, [])
 
+  const resumeBackgroundMusic = useCallback(() => {
+    const audio = audioRef.current
+    if (!audio || audioBroken || !audio.paused) return
+    audio.volume = BGM_VOLUME
+    void audio.play().catch(() => undefined)
+  }, [audioBroken])
+
+  useEffect(() => {
+    resumeBackgroundMusic()
+  }, [resumeBackgroundMusic])
+
   const toggleSound = () => {
     setSound((on) => {
       fadeAudio(on ? 0 : BGM_VOLUME)
@@ -75,17 +86,23 @@ export default function App() {
     setClickPulse({ id: Date.now(), x: event.clientX, y: event.clientY })
   }
 
+  const handleFirstInteraction = (event: PointerEvent<HTMLDivElement>) => {
+    const soundToggle = (event.target as HTMLElement).closest('button.sound')
+    if (sound && !soundToggle) resumeBackgroundMusic()
+  }
+
   return (
     <>
       <audio
         ref={audioRef}
         src="/media/beijing-fantasy-meditations.mp3"
         loop
-        preload="metadata"
+        autoPlay
+        preload="auto"
         onError={() => setAudioBroken(true)}
       />
       <audio ref={clickSoundRef} src="/media/magic-button-click.mp3" preload="auto" />
-      <div className="site" onClickCapture={handleButtonClick}>
+      <div className="site" onPointerDownCapture={handleFirstInteraction} onClickCapture={handleButtonClick}>
         <AncientAtmosphere />
         <ClickAura pulse={clickPulse} onComplete={() => setClickPulse(null)} />
         <PrimaryNavigation active={active}>
