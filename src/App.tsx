@@ -19,6 +19,7 @@ const FADE_MS = 900
 
 export default function App() {
   const videoRef = useRef<HTMLVideoElement>(null)
+  const audioRef = useRef<HTMLAudioElement>(null)
   const fadeRef = useRef(0)
   const [sound, setSound] = useState(false)
   const [audioBroken, setAudioBroken] = useState(false)
@@ -26,22 +27,23 @@ export default function App() {
   const active = useActiveSection(SECTION_IDS)
 
   const fadeAudio = useCallback((to: number) => {
-    const video = videoRef.current
-    if (!video) return
+    const audio = audioRef.current
+    if (!audio) return
     cancelAnimationFrame(fadeRef.current)
-    const from = video.muted ? 0 : video.volume
+    const from = audio.paused ? 0 : audio.volume
     if (to > 0) {
-      video.volume = 0
-      video.muted = false
-      // Unmuting can be rejected if the element was never allowed to play with audio.
-      void video.play().catch(() => setAudioBroken(true))
+      audio.volume = 0
+      void audio.play().catch(() => setAudioBroken(true))
     }
     const started = performance.now()
     const step = (now: number) => {
       const t = Math.min(1, (now - started) / FADE_MS)
-      video.volume = from + (to - from) * t
+      audio.volume = from + (to - from) * t
       if (t < 1) fadeRef.current = requestAnimationFrame(step)
-      else if (to === 0) video.muted = true
+      else if (to === 0) {
+        audio.pause()
+        audio.currentTime = 0
+      }
     }
     fadeRef.current = requestAnimationFrame(step)
   }, [])
@@ -55,6 +57,13 @@ export default function App() {
 
   return (
     <>
+      <audio
+        ref={audioRef}
+        src="/media/beijing-fantasy-meditations.mp3"
+        loop
+        preload="metadata"
+        onError={() => setAudioBroken(true)}
+      />
       <PrimaryNavigation active={active}>
         <SoundControl on={sound} disabled={audioBroken} onToggle={toggleSound} />
       </PrimaryNavigation>
