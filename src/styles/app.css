@@ -49,6 +49,13 @@ button {
   border: 0;
   cursor: pointer;
 }
+button:not(:disabled) {
+  transition: transform var(--dur-fast) var(--ease-out), filter var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+}
+button:not(:disabled):active {
+  transform: scale(0.97);
+  filter: brightness(1.16);
+}
 
 :focus-visible {
   outline: 1px solid var(--gold-bright);
@@ -76,6 +83,51 @@ button {
 
 /* ---------- shared ---------- */
 .page { position: relative; z-index: 1; }
+
+/* drifting incense smoke and moonlit qi, kept deliberately restrained */
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+.atmosphere__smoke,
+.atmosphere__aura {
+  position: absolute;
+  pointer-events: none;
+}
+.atmosphere__smoke {
+  width: min(74rem, 110vw);
+  aspect-ratio: 1.8;
+  border-radius: 50%;
+  filter: blur(44px);
+  background: radial-gradient(ellipse at center, rgba(184, 193, 180, 0.22), rgba(101, 117, 114, 0.1) 36%, transparent 70%);
+  mix-blend-mode: screen;
+}
+.atmosphere__smoke--upper { top: 8vh; left: -26vw; }
+.atmosphere__smoke--lower { right: -32vw; bottom: 4vh; }
+.atmosphere__aura {
+  top: 22vh;
+  left: 50%;
+  width: min(38rem, 92vw);
+  aspect-ratio: 1;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(199, 154, 92, 0.13), rgba(115, 28, 24, 0.06) 42%, transparent 70%);
+  filter: blur(22px);
+}
+.click-aura {
+  position: fixed;
+  z-index: 50;
+  width: 2.4rem;
+  height: 2.4rem;
+  margin: -1.2rem;
+  border: 1px solid rgba(214, 170, 91, 0.9);
+  border-radius: 50%;
+  pointer-events: none;
+  box-shadow: 0 0 0.8rem rgba(167, 122, 63, 0.8), inset 0 0 0.45rem rgba(115, 28, 24, 0.65);
+}
 
 .section {
   position: relative;
@@ -828,6 +880,7 @@ button {
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
+  .atmosphere { display: none; }
   *, *::before, *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
