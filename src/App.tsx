@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useRef, useState, type MouseEvent } from 'react'
 import { BOOKING, CHAPTERS, FACTS, HERO, NAV } from './data/content'
 import { useActiveSection } from './hooks'
 import HeroVideo from './components/HeroVideo'
@@ -12,6 +12,8 @@ import SoulConstellation from './components/SoulConstellation'
 import ExperienceDetails from './components/ExperienceDetails'
 import BookingPanel from './components/BookingPanel'
 import Reveal from './components/Reveal'
+import AncientAtmosphere from './components/AncientAtmosphere'
+import ClickAura, { type ClickPulse } from './components/ClickAura'
 
 const SECTION_IDS = NAV.map((n) => n.id)
 const MOTIF_GLYPHS = ['野', '灯', '烬']
@@ -20,10 +22,12 @@ const FADE_MS = 900
 export default function App() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const audioRef = useRef<HTMLAudioElement>(null)
+  const clickSoundRef = useRef<HTMLAudioElement>(null)
   const fadeRef = useRef(0)
   const [sound, setSound] = useState(false)
   const [audioBroken, setAudioBroken] = useState(false)
   const [booking, setBooking] = useState(false)
+  const [clickPulse, setClickPulse] = useState<ClickPulse>(null)
   const active = useActiveSection(SECTION_IDS)
 
   const fadeAudio = useCallback((to: number) => {
@@ -55,6 +59,20 @@ export default function App() {
     })
   }
 
+  const handleButtonClick = (event: MouseEvent<HTMLDivElement>) => {
+    const button = (event.target as HTMLElement).closest('button')
+    if (!button || button.disabled) return
+
+    const clickSound = clickSoundRef.current
+    if (clickSound) {
+      clickSound.currentTime = 0
+      clickSound.volume = 0.3
+      void clickSound.play().catch(() => undefined)
+    }
+
+    setClickPulse({ id: Date.now(), x: event.clientX, y: event.clientY })
+  }
+
   return (
     <>
       <audio
@@ -64,12 +82,16 @@ export default function App() {
         preload="metadata"
         onError={() => setAudioBroken(true)}
       />
-      <PrimaryNavigation active={active}>
-        <SoundControl on={sound} disabled={audioBroken} onToggle={toggleSound} />
-      </PrimaryNavigation>
-      <ScrollProgress active={active} />
+      <audio ref={clickSoundRef} src="/media/magic-button-click.mp3" preload="auto" />
+      <div className="site" onClickCapture={handleButtonClick}>
+        <AncientAtmosphere />
+        <ClickAura pulse={clickPulse} onComplete={() => setClickPulse(null)} />
+        <PrimaryNavigation active={active}>
+          <SoundControl on={sound} disabled={audioBroken} onToggle={toggleSound} />
+        </PrimaryNavigation>
+        <ScrollProgress active={active} />
 
-      <main className="page">
+        <main className="page">
         {/* 渡口 */}
         <section className="hero" id="ferry" aria-labelledby="hero-title">
           <HeroVideo
@@ -169,11 +191,12 @@ export default function App() {
             </div>
           </section>
         </div>
-      </main>
+        </main>
 
-      <footer className="foot">灵魂摆渡·鸳鸯 · {HERO.category}</footer>
+        <footer className="foot">灵魂摆渡·鸳鸯 · {HERO.category}</footer>
 
-      <BookingPanel open={booking} onClose={() => setBooking(false)} />
+        <BookingPanel open={booking} onClose={() => setBooking(false)} />
+      </div>
     </>
   )
 }
