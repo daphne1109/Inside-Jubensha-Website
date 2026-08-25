@@ -16,7 +16,7 @@ export default function PrimaryNavigation({ active, children }: Props) {
 
   return (
     <nav className="nav" data-scrolled={scrolled} aria-label="主要导航">
-      <span className="nav__mark">鸳鸯</span>
+      <span className="nav__mark">Inside</span>
       <ul className="nav__links">
         {NAV.map(({ id, label }) => (
           <li key={id}>
