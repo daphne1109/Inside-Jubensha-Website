@@ -26,7 +26,7 @@ export default function App() {
   const audioRef = useRef<HTMLAudioElement>(null)
   const clickSoundRef = useRef<HTMLAudioElement>(null)
   const fadeRef = useRef(0)
-  const [sound, setSound] = useState(true)
+  const [sound, setSound] = useState(false)
   const [audioBroken, setAudioBroken] = useState(false)
   const [booking, setBooking] = useState(false)
   const [clickPulse, setClickPulse] = useState<ClickPulse>(null)
@@ -39,7 +39,7 @@ export default function App() {
     const from = audio.paused ? 0 : audio.volume
     if (to > 0) {
       audio.volume = 0
-      void audio.play().catch(() => setAudioBroken(true))
+      void audio.play().catch(() => setSound(false))
     }
     const started = performance.now()
     const step = (now: number) => {
@@ -88,7 +88,7 @@ export default function App() {
 
   const handleFirstInteraction = (event: PointerEvent<HTMLDivElement>) => {
     const soundToggle = (event.target as HTMLElement).closest('button.sound')
-    if (sound && !soundToggle) resumeBackgroundMusic()
+    if (!soundToggle) resumeBackgroundMusic()
   }
 
   return (
@@ -99,6 +99,8 @@ export default function App() {
         loop
         autoPlay
         preload="auto"
+        onPlay={() => setSound(true)}
+        onPause={() => setSound(false)}
         onError={() => setAudioBroken(true)}
       />
       <audio ref={clickSoundRef} src="/media/magic-button-click.mp3" preload="auto" />
