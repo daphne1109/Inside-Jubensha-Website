@@ -1,0 +1,42 @@
+:root {
+  /* palette */
+  --ink: #07090a;
+  --smoke: #151a1d;
+  --smoke-2: #0d1113;
+  --slate: #49535b;
+  --bone: #d8c5a2;
+  --bone-dim: #9c8f78;
+  --gold: #a77a3f;
+  --gold-bright: #c79a5c;
+  --lacquer: #731c18;
+  --lacquer-bright: #9b2a24;
+
+  /* type */
+  --font-body: 'Noto Serif SC', 'Songti SC', 'Source Han Serif SC', serif;
+  --font-display: 'ZCOOL XiaoWei', var(--font-body);
+  --font-brush: 'Ma Shan Zheng', var(--font-display);
+
+  --step--1: clamp(0.78rem, 0.74rem + 0.2vw, 0.88rem);
+  --step-0: clamp(0.95rem, 0.9rem + 0.25vw, 1.06rem);
+  --step-1: clamp(1.15rem, 1.05rem + 0.5vw, 1.4rem);
+  --step-2: clamp(1.5rem, 1.3rem + 1vw, 2.1rem);
+  --step-3: clamp(2rem, 1.6rem + 2vw, 3.2rem);
+
+  /* space */
+  --space-xs: 0.5rem;
+  --space-s: 1rem;
+  --space-m: 2rem;
+  --space-l: 4rem;
+  --space-xl: clamp(5rem, 12vh, 9rem);
+
+  --measure: 62ch;
+  --canvas: 1180px;
+
+  /* motion */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --dur-slow: 1400ms;
+  --dur-mid: 800ms;
+  --dur-fast: 320ms;
+
+  --edge-fade: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+}
